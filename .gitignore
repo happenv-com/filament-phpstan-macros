@@ -1,0 +1,16 @@
+**/.DS_Store
+.idea
+.phpunit.cache
+.phpunit.result.cache
+.serena
+.superpowers
+.vscode
+build
+composer.lock
+coverage
+node_modules
+phpstan.neon
+phpunit.xml
+testbench.yaml
+vendor
+tests/Browser/Screenshots

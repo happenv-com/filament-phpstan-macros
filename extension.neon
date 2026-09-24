@@ -1,0 +1,7 @@
+# Registered automatically by phpstan/extension-installer (see `extra.phpstan`
+# in composer.json); without it, include this file from your phpstan.neon.
+services:
+    -
+        class: Happenv\FilamentPhpstanMacros\FilamentMacroMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension

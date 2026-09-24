@@ -1,0 +1,13 @@
+includes:
+    - phpstan-baseline.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+    tmpDir: build/phpstan
+    # CI analyses against every supported Filament major; a baseline entry
+    # that only one of them produces must not fail the others.
+    reportUnmatchedIgnoredErrors: false

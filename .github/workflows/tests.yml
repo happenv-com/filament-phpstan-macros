@@ -1,0 +1,100 @@
+name: 'Tests'
+
+# PHPStan's own test cases (tests/Unit, and tests/Types, which analyses a
+# fixture with the extension and checks every assertType()) across the
+# supported PHP / Filament / PHPStan range.
+#
+# Libraries do not commit composer.lock, so every leg resolves its own
+# dependency set with `composer update`. `prefer-lowest` proves the lower
+# bounds in composer.json are real — including phpstan/phpstan's, the one
+# runtime dependency — `prefer-stable` proves the package works with what a
+# fresh install gets today.
+#
+# Filament is only a development dependency (the package reads its Macroable
+# trait by name), but every major the extension claims to understand is tested:
+# the macro storage it reads is the same in 3, 4 and 5.
+
+on:
+  push:
+    branches:
+      - '*.x'
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    paths-ignore:
+      - '**.md'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: P${{ matrix.php }} - F${{ matrix.filament }} - ${{ matrix.stability }}
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4', '8.5']
+        filament: ['3', '4', '5']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - filament: '3'
+            filament-constraint: '^3.3'
+          - filament: '4'
+            filament-constraint: '^4.0'
+          - filament: '5'
+            filament-constraint: '^5.0'
+        exclude:
+          # The lowest dependency set (Pest 3) predates PHP 8.5 and only
+          # reports its own deprecations there.
+          - php: '8.5'
+            stability: prefer-lowest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, intl, fileinfo
+          coverage: none
+
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${RUNNER_TOOL_CACHE}/php.json"
+          echo "::add-matcher::${RUNNER_TOOL_CACHE}/phpunit.json"
+
+      - name: Install dependencies
+        env:
+          FILAMENT: ${{ matrix.filament-constraint }}
+          STABILITY: ${{ matrix.stability }}
+        run: |
+          composer require --dev "filament/forms:${FILAMENT}" --no-interaction --no-update
+          composer update "--${STABILITY}" --prefer-dist --no-interaction --no-progress --with-all-dependencies
+
+      - name: List installed dependencies
+        run: composer show -D
+
+      - name: Execute tests
+        run: vendor/bin/pest --ci

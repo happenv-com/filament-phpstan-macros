@@ -1,0 +1,118 @@
+{
+    "name": "happenv-com/filament-phpstan-macros",
+    "description": "PHPStan and Larastan understand macros registered on Filament components.",
+    "license": "MIT",
+    "type": "phpstan-extension",
+    "keywords": [
+        "happenv",
+        "phpstan",
+        "phpstan-extension",
+        "larastan",
+        "filament",
+        "filamentphp",
+        "macros",
+        "static-analysis"
+    ],
+    "authors": [
+        {
+            "name": "Happenv sp. z o.o.",
+            "email": "code@happenv.com",
+            "homepage": "https://happenv.com",
+            "role": "Maintainer"
+        },
+        {
+            "name": "webard",
+            "email": "code@webard.me",
+            "homepage": "https://github.com/webard",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/happenv-com/filament-phpstan-macros",
+    "support": {
+        "issues": "https://github.com/happenv-com/filament-phpstan-macros/issues",
+        "source": "https://github.com/happenv-com/filament-phpstan-macros",
+        "security": "https://github.com/happenv-com/filament-phpstan-macros/security/policy"
+    },
+    "require": {
+        "php": "^8.3",
+        "phpstan/phpstan": "^2.1"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.48",
+        "filament/forms": "^3.3 || ^4.0 || ^5.0",
+        "laravel/pint": "^1.24",
+        "pestphp/pest": "^3.8 || ^4.0 || ^5.0",
+        "pestphp/pest-plugin-arch": "^3.1 || ^4.0 || ^5.0",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "rector/rector": "^2.1"
+    },
+    "suggest": {
+        "larastan/larastan": "Boots your Laravel application during analysis, so the macros your service providers register exist when PHPStan reads them."
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Happenv\\FilamentPhpstanMacros\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Happenv\\FilamentPhpstanMacros\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-1.x": "1.x-dev"
+        },
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    },
+    "scripts": {
+        "ci": [
+            "@normalize-composer-test",
+            "@rector-test",
+            "@pint-test",
+            "@phpstan",
+            "@test"
+        ],
+        "cs": [
+            "@normalize-composer",
+            "@rector",
+            "@pint"
+        ],
+        "normalize-composer": "@composer normalize --ansi",
+        "normalize-composer-test": "@composer normalize --dry-run --ansi",
+        "phpstan": "phpstan analyse --ansi",
+        "pint": "pint",
+        "pint-test": "pint --test",
+        "rector": "rector process",
+        "rector-test": "rector process --dry-run",
+        "test": "pest",
+        "test-coverage": "pest --coverage"
+    },
+    "scripts-descriptions": {
+        "ci": "Runs every CI gate locally: composer.json normalization, Rector, Pint, PHPStan and the test suite.",
+        "cs": "Fixes code style: composer normalize, Rector, then Pint (Rector adds imports, Pint sorts them).",
+        "normalize-composer": "Normalizes composer.json.",
+        "normalize-composer-test": "Checks composer.json is normalized.",
+        "phpstan": "Runs PHPStan.",
+        "pint": "Formats the code with Pint.",
+        "pint-test": "Checks the code style with Pint.",
+        "rector": "Applies Rector refactorings.",
+        "rector-test": "Shows pending Rector refactorings.",
+        "test": "Runs the test suite.",
+        "test-coverage": "Runs the test suite with code coverage (needs pcov or Xdebug)."
+    }
+}
