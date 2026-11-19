@@ -99,7 +99,7 @@
         "pint-test": "pint --test",
         "rector": "rector process",
         "rector-test": "rector process --dry-run",
-        "test": "pest",
+        "test": "pest --parallel",
         "test-coverage": "pest --coverage"
     },
     "scripts-descriptions": {
